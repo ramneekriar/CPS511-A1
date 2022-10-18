@@ -47,7 +47,7 @@ char curJoint = 'b';
 
 // Control angles
 float robotAngle = 0.0;
-float hipAngle = 0.0;
+float leftHipAngle = 0.0;
 float leftKneeAngle = 0.0;
 
 float upperLegAngle = 30.0;
@@ -113,10 +113,10 @@ void drawBody();
 void drawHead();
 void drawCannon();
 void drawLowerBody();
-//void drawLeftLeg();
-//void drawRightLeg();
 void drawLeftUpperLeg();
 void drawRightUpperLeg();
+void drawLeftUpperLeg2();
+void drawRightUpperLeg2();
 void drawLeftLowerLeg();
 void drawRightLowerLeg();
 void drawLeftFoot();
@@ -228,33 +228,21 @@ void drawRobot()
     glPushMatrix();
     glRotatef(robotAngle, 0.0, 1.0, 0.0); // spin robot on base.
         
-    glPushMatrix();
-    glRotatef(hipAngle, 0.0, 1.0, 0.0);  // spin robot on hip.
+//    glPushMatrix();
+//    glRotatef(hipAngle, 0.0, 1.0, 0.0);  // spin robot on hip.
     drawBody();
     drawHead();
     drawCannon();
     glPopMatrix();
-    
-    glPopMatrix();
+//    glPopMatrix();
     
     // don't want to spin fixed base in this example
     glPushMatrix();
      //spin robot
      glRotatef(robotAngle, 0.0, 1.0, 0.0);
     drawLowerBody();
-    
     drawLeftUpperLeg();
-    glPushMatrix();
-    glTranslatef(0.25*robotBodyWidth + -0.25*upperLegWidth, -0.79*robotBodyWidth, -0.055*robotBodyWidth);
-    glRotatef(leftKneeAngle, 1.0, 0.0, 0.0);
-    glTranslatef(-(0.25*robotBodyWidth + -0.25*upperLegWidth), -(-0.79*robotBodyWidth), -(-0.055*robotBodyWidth));
-    drawLeftLowerLeg();
-    drawLeftFoot();
-    glPopMatrix();
-    
     drawRightUpperLeg();
-    drawRightLowerLeg();
-    drawRightFoot();
     
     glPopMatrix();
     glPopMatrix();
@@ -355,7 +343,7 @@ void drawLowerBody()
     
     glPushMatrix();
     // Position lower cylindrical join in respect to body
-    glTranslatef(0.0, -1.5*robotBodyLength, -0.15*robotBodyWidth); // this will be done last
+    glTranslatef(0.0, -1.5*robotBodyLength, -0.15*robotBodyWidth);
     
     glPushMatrix();
     // Creating cylinder object for lower body
@@ -366,7 +354,7 @@ void drawLowerBody()
     
     glPushMatrix();
     // Position disk object to close lower body cylinder left side
-    glTranslatef(0.0, -1.5*robotBodyLength, 0.01*robotBodyWidth); // this will be done last
+    glTranslatef(0.0, -1.5*robotBodyLength, 0.01*robotBodyWidth);
     
     glPushMatrix();
     // Creating disk object to close lower body cylinder sides
@@ -380,7 +368,7 @@ void drawLowerBody()
     
     glPushMatrix();
     // Position disk object to close lower body cylinder right side
-    glTranslatef(0.0, -1.5*robotBodyLength, 0.15*robotBodyWidth); // this will be done last
+    glTranslatef(0.0, -1.5*robotBodyLength, 0.15*robotBodyWidth);
 
     glPushMatrix();
     // Creating disk object to close lower body cylinder sides
@@ -404,6 +392,11 @@ void drawLeftUpperLeg()
     
     glPushMatrix();
     glTranslatef(0.25*robotBodyWidth + -0.25*upperLegWidth, -0.5*robotBodyWidth, -0.075*robotBodyWidth);
+    glRotatef(leftHipAngle, 1.0, 0.0, 0.0);
+    glTranslatef(-(0.25*robotBodyWidth + -0.25*upperLegWidth), -(-0.5*robotBodyWidth), -(-0.075*robotBodyWidth));
+    
+    glPushMatrix();
+    glTranslatef(0.25*robotBodyWidth + -0.25*upperLegWidth, -0.5*robotBodyWidth, -0.075*robotBodyWidth);
     glRotatef(upperLegAngle, 1.0, 0.0, 0.0);
     glTranslatef(-(0.25*robotBodyWidth + -0.25*upperLegWidth), -(-0.5*robotBodyWidth), -(-0.075*robotBodyWidth));
     
@@ -419,6 +412,8 @@ void drawLeftUpperLeg()
     glPopMatrix();
     glPopMatrix();
     glPopMatrix();
+    
+    drawLeftLowerLeg();
 }
 
 void drawRightUpperLeg()
@@ -445,6 +440,8 @@ void drawRightUpperLeg()
     glPopMatrix();
     glPopMatrix();
     glPopMatrix();
+    
+    drawRightLowerLeg();
 }
 
 void drawLeftLowerLeg()
@@ -453,6 +450,11 @@ void drawLeftLowerLeg()
     glMaterialfv(GL_FRONT, GL_SPECULAR, robotLeg_mat_specular);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, robotLeg_mat_diffuse);
     glMaterialfv(GL_FRONT, GL_SHININESS, robotLeg_mat_shininess);
+    
+    glPushMatrix();
+    glTranslatef(0.25*robotBodyWidth + -0.25*upperLegWidth, -0.79*robotBodyWidth, -0.055*robotBodyWidth);
+    glRotatef(leftKneeAngle, 1.0, 0.0, 0.0);
+    glTranslatef(-(0.25*robotBodyWidth + -0.25*upperLegWidth), -(-0.79*robotBodyWidth), -(-0.055*robotBodyWidth));
     
     glPushMatrix();
     glTranslatef(0.25*robotBodyWidth + -0.25*upperLegWidth, -0.79*robotBodyWidth, -0.055*robotBodyWidth);
@@ -471,6 +473,8 @@ void drawLeftLowerLeg()
     glPopMatrix();
     glPopMatrix();
     glPopMatrix();
+    
+    drawLeftFoot();
 }
 
 void drawRightLowerLeg()
@@ -497,6 +501,8 @@ void drawRightLowerLeg()
     glPopMatrix();
     glPopMatrix();
     glPopMatrix();
+    
+    drawRightFoot();
 }
 
 void drawLeftFoot()
@@ -511,7 +517,7 @@ void drawLeftFoot()
     
     glPushMatrix();
     // Position lower cylindrical join in respect to body
-    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, lowerLegWidth); // this will be done last
+    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, lowerLegWidth);
     
     glPushMatrix();
     // Creating cylinder object for lower body
@@ -522,7 +528,7 @@ void drawLeftFoot()
     
     glPushMatrix();
     // Position disk object to close lower body cylinder left side
-    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -(-2.1*lowerLegWidth)); // this will be done last
+    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -(-2.1*lowerLegWidth));
 
     glPushMatrix();
     // Creating disk object to close lower body cylinder sides
@@ -536,7 +542,7 @@ void drawLeftFoot()
 
     glPushMatrix();
     // Position disk object to close lower body cylinder right side
-    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -(-1.1*lowerLegWidth)); // this will be done last
+    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -(-1.1*lowerLegWidth));
 
     glPushMatrix();
     // Creating disk object to close lower body cylinder sides
@@ -552,7 +558,7 @@ void drawLeftFoot()
     // FOOT
     glPushMatrix();
     // Position upper leg with respect to parent body
-    glTranslatef(-(-1.55*lowerLegWidth), -5.0*robotBodyLength, 0.6*lowerLegWidth); // this will be done last
+    glTranslatef(-(-1.55*lowerLegWidth), -5.0*robotBodyLength, 0.6*lowerLegWidth);
 
     // build upper leg
     glPushMatrix();
@@ -612,6 +618,9 @@ void drawLeftFoot()
     glPopMatrix();
     glPopMatrix();
     glPopMatrix();
+    
+    glPopMatrix();
+    glPopMatrix(); // closing left leg hierarchy here
 }
 
 void drawRightFoot()
@@ -626,7 +635,7 @@ void drawRightFoot()
     
     glPushMatrix();
     // Position lower cylindrical join in respect to body
-    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -2.1*lowerLegWidth); // this will be done last
+    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -2.1*lowerLegWidth);
     
     glPushMatrix();
     // Creating cylinder object for lower body
@@ -637,7 +646,7 @@ void drawRightFoot()
     
     glPushMatrix();
     // Position disk object to close lower body cylinder left side
-    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -2.1*lowerLegWidth); // this will be done last
+    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -2.1*lowerLegWidth);
 
     glPushMatrix();
     // Creating disk object to close lower body cylinder sides
@@ -651,7 +660,7 @@ void drawRightFoot()
 
     glPushMatrix();
     // Position disk object to close lower body cylinder right side
-    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -1.1*lowerLegWidth); // this will be done last
+    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, -1.1*lowerLegWidth);
 
     glPushMatrix();
     // Creating disk object to close lower body cylinder sides
@@ -667,7 +676,7 @@ void drawRightFoot()
     // FOOT
     glPushMatrix();
     // Position upper leg with respect to parent body
-    glTranslatef(-1.55*lowerLegWidth, -5.0*robotBodyLength, 0.6*lowerLegWidth); // this will be done last
+    glTranslatef(-1.55*lowerLegWidth, -5.0*robotBodyLength, 0.6*lowerLegWidth);
 
     // build upper leg
     glPushMatrix();
@@ -797,45 +806,40 @@ void functionKeys(int key, int x, int y)
             {
                 robotAngle -= 2.0;
             }
-            else if (curJoint == 'h')
-            {
-                hipAngle -= 2.0;
-            }
-            else if (curJoint == 'k')
-            {
-                leftKneeAngle -= 2.0;
-            }
             break;
         case GLUT_KEY_RIGHT:
             if (curJoint == 'b')
             {
                 robotAngle += 2.0;
             }
+            break;
+        case GLUT_KEY_UP:
+            if (curJoint == 'k')
+            {
+                leftKneeAngle -= 2.0;
+            }
             else if (curJoint == 'h')
             {
-                hipAngle += 2.0;
+                leftHipAngle -= 2.0;
             }
-            else if (curJoint == 'k')
+            break;
+        case GLUT_KEY_DOWN:
+            if (curJoint == 'k')
             {
                 leftKneeAngle += 2.0;
             }
+            else if (curJoint == 'h')
+            {
+                leftHipAngle += 2.0;
+            }
             break;
     }
-//    // Help key
-//    if (key == GLUT_KEY_LEFT)
-//    {
-//
-//    }
-//    // Do transformations with arrow keys
-//    //else if (...)   // GLUT_KEY_DOWN, GLUT_KEY_UP, GLUT_KEY_RIGHT, GLUT_KEY_LEFT
-//    //{
-//    //}
 
     glutPostRedisplay();   // Trigger a window redisplay
 }
 
 
-// Mouse button callback - use only if you want to
+//Mouse button callback - use only if you want to
 void mouse(int button, int state, int x, int y)
 {
     currentButton = button;
