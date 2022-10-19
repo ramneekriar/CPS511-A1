@@ -49,6 +49,7 @@ char curJoint = 'b';
 float robotAngle = 0.0;
 float leftHipAngle = 0.0;
 float leftKneeAngle = 0.0;
+float leftFootAngle = 0.0;
 
 float upperLegAngle = 30.0;
 float lowerLegAngle = -60.0;
@@ -108,6 +109,9 @@ void mouseMotionHandler(int xMouse, int yMouse);
 void keyboard(unsigned char key, int x, int y);
 void functionKeys(int key, int x, int y);
 void cannonAnimationHandler(int param);
+void leftStepForwardAnimationHandler(int param);
+void leftStepBackwardAnimationHandler(int param);
+void stepAnimationHandler(int param);
 void drawRobot();
 void drawBody();
 void drawHead();
@@ -513,6 +517,11 @@ void drawLeftFoot()
     glMaterialfv(GL_FRONT, GL_SHININESS, robotLowerBody_mat_shininess);
     
     glPushMatrix();
+    glTranslatef(-1.5*lowerLegWidth, -4.1*robotBodyLength, lowerLegWidth);
+    glRotatef(leftFootAngle, 1.0, 0.0, 0.0);
+    glTranslatef(1.5*lowerLegWidth, 4.1*robotBodyLength, -lowerLegWidth);
+    
+    glPushMatrix();
     glRotatef(90.0, 0.0, 1.0, 0.0);
     
     glPushMatrix();
@@ -619,6 +628,7 @@ void drawLeftFoot()
     glPopMatrix();
     glPopMatrix();
     
+    glPopMatrix();
     glPopMatrix();
     glPopMatrix(); // closing left leg hierarchy here
 }
@@ -756,7 +766,8 @@ void reshape(int w, int h)
     gluLookAt(0.0, 6.0, 22.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
-bool stop = false;
+bool cannonStop = false;
+bool leftStep = false;
 
 // Callback, handles input from the keyboard, non-arrow keys
 void keyboard(unsigned char key, int x, int y)
@@ -773,10 +784,22 @@ void keyboard(unsigned char key, int x, int y)
             curJoint = 'k';
         break;
     case 'c':
+        cannonStop = false;
         glutTimerFunc(10, cannonAnimationHandler, 0);
         break;
     case 'C':
-        stop = true;
+        cannonStop = true;
+        break;
+    case 'w':
+        leftStep = false;
+        glutTimerFunc(1800, stepAnimationHandler, 0);
+        break;
+    case 'W':
+        leftHipAngle = 0.0;
+        leftKneeAngle = 0.0;
+        leftFootAngle = 0.0;
+        leftStep = true;
+        glutPostRedisplay();
         break;
     }
 
@@ -786,7 +809,7 @@ void keyboard(unsigned char key, int x, int y)
 
 void cannonAnimationHandler(int param)
 {
-    if (!stop)
+    if (!cannonStop)
     {
         cannonAngle += 5.0;
         glutPostRedisplay();
@@ -794,6 +817,36 @@ void cannonAnimationHandler(int param)
     }
 }
 
+void stepAnimationHandler(int param)
+{
+    if (!leftStep)
+    {
+        glutTimerFunc(800, leftStepForwardAnimationHandler, 0);
+        glutTimerFunc(1000, leftStepBackwardAnimationHandler, 0);
+        glutTimerFunc(1800, stepAnimationHandler, 0);
+        glutPostRedisplay();
+    }
+}
+
+void leftStepForwardAnimationHandler(int param)
+{
+    if (!leftStep)
+        {
+            leftHipAngle -= 50.0;
+            leftKneeAngle += 50.0;
+            glutPostRedisplay();
+        }
+}
+
+void leftStepBackwardAnimationHandler(int param)
+{
+    if (!leftStep)
+        {
+            leftHipAngle += 50.0;
+            leftKneeAngle -= 50.0;
+            glutPostRedisplay();
+        }
+}
 
 
 // Callback, handles input from the keyboard, function and arrow keys
